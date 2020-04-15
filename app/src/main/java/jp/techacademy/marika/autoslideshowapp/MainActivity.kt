@@ -3,23 +3,34 @@ package jp.techacademy.marika.autoslideshowapp
 import android.Manifest
 import android.content.ContentUris
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+
+
+
     private val PERMISSIONS_REQUEST_CODE = 100
+
     private var mTimer: Timer?=null
 //タイマー用の変数
     private var mTimerSec=0.0
     private var mHandler =Handler()
-    private var mImageView=imageview
+
+    var imageUriArray = ArrayList<Uri>()
+
 
 
 
@@ -30,14 +41,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         // タイマーの作成
         mTimer = Timer()
         mTimer!!.schedule(object : TimerTask() {
             override fun run() {
+//                    val num: Int = mHandler % imageUriArray.size
+//                    mImageView.setImageURI(imageUriArray[num])
+//                    mTimerText!!.text = String.format("%d枚目を表示中", num + 1)
                 mTimerSec += 0.1
-//                mImageView.setImageURI()//？？
+
                 mHandler.post {
-//                    imageview.text = String.format("%.1f", mTimerSec) ここをimageViewにしたい
+                   timer.text = String.format("%.1f", mTimerSec) //ここをimageViewにしたい
                 }
             }
         }, 200, 200) // 最初に始動させるまで 200ミリ秒、ループの間隔を 200ミリ秒 に設定
@@ -101,8 +116,25 @@ class MainActivity : AppCompatActivity() {
             } while (cursor.moveToNext())
         }
         cursor.close()
+//    }
+//    override fun  onClicklistner(view: View){
+//
+//        //画像の取得に成功しているかつ画像が1枚以上あったら次へ
+//        if (imageUriArray.size != 0) {
+//            mHandler += 1
+//            val num: Int = mHandler % imageUriArray.size
+//            mImageView!!.setImageURI(imageUriArray[num])
+//            mTimerText!!.text = String.format("%d枚目を表示中", num + 1)
+//        } else {
+//            mTimerText!!.text = String.format("写真へのアクセスを許可した後に，画像を1枚以上追加してください")
+//        }
+//
     }
+
+
+
 }
+
 
 
 //        next.setOnClickListener(this)
@@ -113,8 +145,6 @@ class MainActivity : AppCompatActivity() {
 //
 //    }
 //
-//    override fun onClick(){
-
         //クリック機能
 
 
