@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),View.OnClickListener {
 
 
 
@@ -41,31 +41,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        // タイマーの作成
-        mTimer = Timer()
-        mTimer!!.schedule(object : TimerTask() {
-            override fun run() {
-//                    val num: Int = mHandler % imageUriArray.size
-//                    mImageView.setImageURI(imageUriArray[num])
-//                    mTimerText!!.text = String.format("%d枚目を表示中", num + 1)
-                mTimerSec += 0.1
-
-                mHandler.post {
-                   timer.text = String.format("%.1f", mTimerSec) //ここをimageViewにしたい
-                }
-            }
-        }, 200, 200) // 最初に始動させるまで 200ミリ秒、ループの間隔を 200ミリ秒 に設定
-
-        start.setOnClickListener {
-            if (mTimer == null) {
+        next.setOnClickListener{Log.d("button","NEXT")}
+        back.setOnClickListener{
+            Log.d("button","BACK")}
+        start.setOnClickListener{Log.d("button","START")}
 
 
-                mTimer!!.cancel()
-                mTimerSec = 0.0
-                //imageview.setImageURI() = String.format("%.1f", mTimerSec)写真が止まる //
-            }
-        }
+
+
+
+
+
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -82,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             getContentsInfo()
         }
     }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
@@ -104,48 +91,29 @@ class MainActivity : AppCompatActivity() {
         )
 
         if (cursor!!.moveToFirst()) {
-            do {
                 // indexからIDを取得し、そのIDから画像のURIを取得する
                 val fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
                 val id = cursor.getLong(fieldIndex)
-                val imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                val imageUri =
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
                 imageview.setImageURI(imageUri)
 
                 Log.d("ANDROID", "URI : " + imageUri.toString())
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-//    }
-//    override fun  onClicklistner(view: View){
-//
-//        //画像の取得に成功しているかつ画像が1枚以上あったら次へ
-//        if (imageUriArray.size != 0) {
-//            mHandler += 1
-//            val num: Int = mHandler % imageUriArray.size
-//            mImageView!!.setImageURI(imageUriArray[num])
-//            mTimerText!!.text = String.format("%d枚目を表示中", num + 1)
-//        } else {
-//            mTimerText!!.text = String.format("写真へのアクセスを許可した後に，画像を1枚以上追加してください")
-//        }
-//
+
     }
+        cursor.close()
+    }
+    override fun onClick (v:View?){
+        if (v != null) {
+            if (v.id == R.id.next) {
+                imageview.setImageURI(imageUri)
+            }
 
+            }
 
-
-}
-
-
-
-//        next.setOnClickListener(this)
-//
-//        back.setOnClickListener(this)
-//
-//        start.setOnClickListener(this)
-//
-//    }
-//
-        //クリック機能
+    }
+            }
 
 
 
