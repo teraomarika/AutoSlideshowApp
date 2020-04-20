@@ -89,27 +89,37 @@ class MainActivity : AppCompatActivity() {
 
 
         start.setOnClickListener {
-            if (cursor!!.moveToFirst()) {
-            val fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
-            val id = cursor.getLong(fieldIndex)
-            val imageUri =
-                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
-            imageview.setImageURI(imageUri)
+            mTimer = Timer()
+            mTimer!!.schedule(object : TimerTask() {
+                override fun run() {
+                    mTimerSec += 0.1
+                    mHandler.post {
 
-                mTimer = Timer()
-                mTimer!!.schedule(object : TimerTask() {
-                    override fun run() {
-                        mTimerSec += 0.1
-                        mHandler.post {
+                        if (cursor!!.moveToNext()) {
+                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                        val id = cursor!!.getLong(fieldIndex)
+                        val imageUri =
+                            ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                            )
                             imageview.setImageURI(imageUri)
+
+                        }else if (cursor!!.moveToNext()) {
+                            val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                            val id = cursor!!.getLong(fieldIndex)
+                            val imageUri =
+                                ContentUris.withAppendedId(
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                                )
+                            imageview.setImageURI(imageUri)
+                            
                         }
                     }
-                }, 200, 200) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
+                }
+            }, 100, 100) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
 
             }
-        }
-
 
 
 
@@ -164,8 +174,10 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-        }
     }
+}
+
+
 
 
 
