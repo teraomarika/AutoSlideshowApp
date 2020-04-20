@@ -3,6 +3,7 @@ package jp.techacademy.marika.autoslideshowapp
 import android.Manifest
 import android.content.ContentUris
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,40 +19,29 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 
-class MainActivity : AppCompatActivity(),View.OnClickListener {
-
+class MainActivity : AppCompatActivity() {
 
 
     private val PERMISSIONS_REQUEST_CODE = 100
 
-    private var mTimer: Timer?=null
-//タイマー用の変数
-    private var mTimerSec=0.0
-    private var mHandler =Handler()
+    private var mTimer: Timer? = null
+
+    //タイマー用の変数
+    private var mTimerSec = 0.0
+    private var mHandler = Handler()
 
     var imageUriArray = ArrayList<Uri>()
-
-
-
-
-
+    var cursor: Cursor? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        next.setOnClickListener{Log.d("button","NEXT")}
-        back.setOnClickListener{
-            Log.d("button","BACK")}
-        start.setOnClickListener{Log.d("button","START")}
-
-
-
-
-
-
-
+        next.setOnClickListener { Log.d("button", "NEXT") }
+        back.setOnClickListener {
+            Log.d("button", "BACK")
+        }
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -61,7 +51,10 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
                 getContentsInfo()
             } else {
                 // 許可されていないので許可ダイアログを表示する
-                requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_CODE)
+                requestPermissions(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    PERMISSIONS_REQUEST_CODE
+                )
             }
             // Android 5系以下の場合
         } else {
@@ -70,7 +63,11 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             PERMISSIONS_REQUEST_CODE ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -90,30 +87,88 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
             null // ソート (null ソートなし)
         )
 
-        if (cursor!!.moveToFirst()) {
-                // indexからIDを取得し、そのIDから画像のURIを取得する
-                val fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                val id = cursor.getLong(fieldIndex)
-                val imageUri =
-                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
-                imageview.setImageURI(imageUri)
+        start.setOnClickListener {
+            if (cursor!!.moveToFirst()) {
+            val fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+            val id = cursor.getLong(fieldIndex)
+            val imageUri =
+                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
-                Log.d("ANDROID", "URI : " + imageUri.toString())
+            imageview.setImageURI(imageUri)
 
-    }
-        cursor.close()
-    }
-    override fun onClick (v:View?){
-        if (v != null) {
-            if (v.id == R.id.next) {
-                imageview.setImageURI(imageUri)
+                mTimer = Timer()
+                mTimer!!.schedule(object : TimerTask() {
+                    override fun run() {
+                        mTimerSec += 0.1
+                        mHandler.post {
+                            imageview.setImageURI(imageUri)
+                        }
+                    }
+                }, 200, 200) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
+
+            }
+        }
+
+
+
+
+            next.setOnClickListener {
+
+                if (cursor!!.moveToNext()) {
+                    val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                    val id = cursor!!.getLong(fieldIndex)
+                    val imageUri =
+                        ContentUris.withAppendedId(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                        )
+                    mHandler.post {
+                        imageview.setImageURI(imageUri)
+                    }
+                } else if (cursor!!.moveToFirst()) {
+                    val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                    val id = cursor!!.getLong(fieldIndex)
+                    val imageUri =
+                        ContentUris.withAppendedId(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                        )
+                    mHandler.post {
+                        imageview.setImageURI(imageUri)
+                    }
+                }
+
+                back.setOnClickListener {
+                    if (cursor!!.moveToPrevious()) {
+                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                        val id = cursor!!.getLong(fieldIndex)
+                        val imageUri =
+                            ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                            )
+                        mHandler.post {
+                            imageview.setImageURI(imageUri)
+                        }
+                    } else if (cursor!!.moveToPrevious()) {
+                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                        val id = cursor!!.getLong(fieldIndex)
+                        val imageUri =
+                            ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                            )
+                        mHandler.post {
+                            imageview.setImageURI(imageUri)
+                        }
+                    }
+                }
+
             }
 
-            }
 
+        }
     }
-            }
+
+
+
 
 
 

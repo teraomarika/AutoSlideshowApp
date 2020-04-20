@@ -24,17 +24,6 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/imageview"/>
 
-    <Button
-        android:id="@+id/next"
-        android:layout_width="76dp"
-        android:layout_height="76dp"
-        android:layout_below="@id/imageview"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@id/start"
-        android:background="#6C81A9"
-        android:textColor="#F7CCC5"
-        android:text="next" />
 
     <Button
         android:id="@+id/back"
@@ -47,8 +36,20 @@
         android:layout_marginEnd="32dp"
         android:layout_toEndOf="@id/next"
         android:background="#6C81A9"
-        android:text="back"
+        android:text="←back"
         android:textColor="#F7CCC5" />
+    <Button
+        android:id="@+id/next"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        android:layout_below="@id/imageview"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/start"
+        android:background="#6C81A9"
+        android:textColor="#F7CCC5"
+        android:text="Next→" />
+
 
     <Button
         android:id="@+id/start"
