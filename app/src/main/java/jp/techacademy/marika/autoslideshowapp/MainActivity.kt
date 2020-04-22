@@ -91,67 +91,100 @@ class MainActivity : AppCompatActivity() {
         )
 
 
-        start.setOnClickListener {
-            start.text = "STOP"
-            next.isEnabled = false
-            back.isEnabled = false
 
-            mTimer = Timer()
-            mTimer!!.schedule(object : TimerTask() {
-                override fun run() {
-                    mTimerSec += 2.0
-                    mHandler.post {
 
-                        if (cursor!!.moveToNext()) {
-                            val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                            val id = cursor!!.getLong(fieldIndex)
-                            val imageUri =
-                                ContentUris.withAppendedId(
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                                )
+       if (start.setOnClickListener()){
+            if (start.text == "START") {
+                start.text = "STOP"
+                next.isEnabled = false
+                back.isEnabled = false
+                mTimer = Timer()
+                mTimer!!.schedule(object : TimerTask() {
+                    override fun run() {
+                        mTimerSec += 2.0
+                        mHandler.post {
+
+                            if (cursor!!.moveToNext()) {
+                                val fieldIndex =
+                                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                                val id = cursor!!.getLong(fieldIndex)
+                                val imageUri =
+                                    ContentUris.withAppendedId(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                                    )
+                                imageview.setImageURI(imageUri)
+
+                            }
+                        }
+                    }
+                }, 2000, 2000) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
+            } else if (start.text == "STOP") {
+                start.text = "START"
+                if (mTimer != null) {
+                    mTimer!!.cancel()
+                    mTimer = null
+
+                }
+
+
+
+
+
+                next.setOnClickListener {
+
+                    if (cursor!!.moveToNext()) {
+                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                        val id = cursor!!.getLong(fieldIndex)
+                        val imageUri =
+                            ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                            )
+                        mHandler.post {
                             imageview.setImageURI(imageUri)
+                        }
+                    } else if (cursor!!.moveToFirst()) {
+                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                        val id = cursor!!.getLong(fieldIndex)
+                        val imageUri =
+                            ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                            )
+                        mHandler.post {
+                            imageview.setImageURI(imageUri)
+                        }
 
+                        back.setOnClickListener {
+
+                            if (cursor!!.moveToPrevious()) {
+                                val fieldIndex =
+                                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                                val id = cursor!!.getLong(fieldIndex)
+                                val imageUri =
+                                    ContentUris.withAppendedId(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                                    )
+                                mHandler.post {
+                                    imageview.setImageURI(imageUri)
+
+                                }
+                            } else if (cursor!!.moveToLast()) {
+                                val fieldIndex =
+                                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                                val id = cursor!!.getLong(fieldIndex)
+                                val imageUri =
+                                    ContentUris.withAppendedId(
+                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                                    )
+                                mHandler.post {
+                                    imageview.setImageURI(imageUri)
+
+                                }
+
+
+                            }
                         }
                     }
                 }
-            }, 2000, 2000) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
-        }
-
-
-
-
-
-        next.setOnClickListener {
-
-            if (cursor!!.moveToNext()) {
-                val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                val id = cursor!!.getLong(fieldIndex)
-                val imageUri =
-                    ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                    )
-                mHandler.post {
-                    imageview.setImageURI(imageUri)
-                }
-            }
-
-            back.setOnClickListener {
-
-                if (cursor!!.moveToPrevious()) {
-                    val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                    val id = cursor!!.getLong(fieldIndex)
-                    val imageUri =
-                        ContentUris.withAppendedId(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                        )
-                    mHandler.post {
-                        imageview.setImageURI(imageUri)
-
-
-                    }
-                }
-
-
             }
         }
     }
