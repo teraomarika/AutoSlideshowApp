@@ -60,7 +60,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginStart="44dp"
         android:background="#6C81A9"
-        android:text="start/stop"
+        android:text="start"
         android:textColor="#D9A49C" />
 
 

@@ -72,6 +72,9 @@ class MainActivity : AppCompatActivity() {
             PERMISSIONS_REQUEST_CODE ->
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getContentsInfo()
+                    Log.d("android", "許可された")
+                } else {
+                    Log.d("android", "許可しなかた")
                 }
         }
     }
@@ -89,23 +92,17 @@ class MainActivity : AppCompatActivity() {
 
 
         start.setOnClickListener {
+            start.text = "STOP"
+            next.isEnabled = false
+            back.isEnabled = false
 
             mTimer = Timer()
             mTimer!!.schedule(object : TimerTask() {
                 override fun run() {
-                    mTimerSec += 0.1
+                    mTimerSec += 2.0
                     mHandler.post {
 
                         if (cursor!!.moveToNext()) {
-                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                        val id = cursor!!.getLong(fieldIndex)
-                        val imageUri =
-                            ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                            )
-                            imageview.setImageURI(imageUri)
-
-                        }else if (cursor!!.moveToNext()) {
                             val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
                             val id = cursor!!.getLong(fieldIndex)
                             val imageUri =
@@ -113,19 +110,34 @@ class MainActivity : AppCompatActivity() {
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
                                 )
                             imageview.setImageURI(imageUri)
-                            
+
                         }
                     }
                 }
-            }, 100, 100) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
+            }, 2000, 2000) // 最初に始動させるまで 100ミリ秒、ループの間隔を 100ミリ秒 に設定
+        }
 
+
+
+
+
+        next.setOnClickListener {
+
+            if (cursor!!.moveToNext()) {
+                val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor!!.getLong(fieldIndex)
+                val imageUri =
+                    ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                    )
+                mHandler.post {
+                    imageview.setImageURI(imageUri)
+                }
             }
 
+            back.setOnClickListener {
 
-
-            next.setOnClickListener {
-
-                if (cursor!!.moveToNext()) {
+                if (cursor!!.moveToPrevious()) {
                     val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
                     val id = cursor!!.getLong(fieldIndex)
                     val imageUri =
@@ -134,48 +146,17 @@ class MainActivity : AppCompatActivity() {
                         )
                     mHandler.post {
                         imageview.setImageURI(imageUri)
-                    }
-                } else if (cursor!!.moveToFirst()) {
-                    val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                    val id = cursor!!.getLong(fieldIndex)
-                    val imageUri =
-                        ContentUris.withAppendedId(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                        )
-                    mHandler.post {
-                        imageview.setImageURI(imageUri)
+
+
                     }
                 }
 
-                back.setOnClickListener {
-                    if (cursor!!.moveToPrevious()) {
-                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                        val id = cursor!!.getLong(fieldIndex)
-                        val imageUri =
-                            ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                            )
-                        mHandler.post {
-                            imageview.setImageURI(imageUri)
-                        }
-                    } else if (cursor!!.moveToPrevious()) {
-                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                        val id = cursor!!.getLong(fieldIndex)
-                        val imageUri =
-                            ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                            )
-                        mHandler.post {
-                            imageview.setImageURI(imageUri)
-                        }
-                    }
-                }
 
             }
-
-
+        }
     }
 }
+
 
 
 
