@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-       if (start.setOnClickListener()){
+        start.setOnClickListener {
             if (start.text == "START") {
                 start.text = "STOP"
                 next.isEnabled = false
@@ -123,70 +123,74 @@ class MainActivity : AppCompatActivity() {
                 if (mTimer != null) {
                     mTimer!!.cancel()
                     mTimer = null
+                    next.isEnabled = true
+                    back.isEnabled = true
 
-                }
-
-
-
-
-
-                next.setOnClickListener {
-
-                    if (cursor!!.moveToNext()) {
-                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                        val id = cursor!!.getLong(fieldIndex)
-                        val imageUri =
-                            ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                            )
-                        mHandler.post {
-                            imageview.setImageURI(imageUri)
-                        }
-                    } else if (cursor!!.moveToFirst()) {
-                        val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                        val id = cursor!!.getLong(fieldIndex)
-                        val imageUri =
-                            ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                            )
-                        mHandler.post {
-                            imageview.setImageURI(imageUri)
-                        }
-
-                        back.setOnClickListener {
-
-                            if (cursor!!.moveToPrevious()) {
-                                val fieldIndex =
-                                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                                val id = cursor!!.getLong(fieldIndex)
-                                val imageUri =
-                                    ContentUris.withAppendedId(
-                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                                    )
-                                mHandler.post {
-                                    imageview.setImageURI(imageUri)
-
-                                }
-                            } else if (cursor!!.moveToLast()) {
-                                val fieldIndex =
-                                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
-                                val id = cursor!!.getLong(fieldIndex)
-                                val imageUri =
-                                    ContentUris.withAppendedId(
-                                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
-                                    )
-                                mHandler.post {
-                                    imageview.setImageURI(imageUri)
-
-                                }
-
-
-                            }
-                        }
-                    }
                 }
             }
         }
+
+
+
+
+
+        next.setOnClickListener {
+
+            if (cursor!!.moveToNext()) {
+                val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor!!.getLong(fieldIndex)
+                val imageUri =
+                    ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                    )
+                mHandler.post {
+                    imageview.setImageURI(imageUri)
+                }
+            } else if (cursor!!.moveToFirst()) {
+                val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor!!.getLong(fieldIndex)
+                val imageUri =
+                    ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                    )
+                mHandler.post {
+                    imageview.setImageURI(imageUri)
+                }
+            }
+        }
+
+
+        back.setOnClickListener {
+
+            if (cursor!!.moveToPrevious()) {
+                val fieldIndex =
+                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor!!.getLong(fieldIndex)
+                val imageUri =
+                    ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                    )
+                mHandler.post {
+                    imageview.setImageURI(imageUri)
+                }
+            } else if (cursor!!.moveToLast()) {
+                val fieldIndex =
+                    cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
+                val id = cursor!!.getLong(fieldIndex)
+                val imageUri =
+                    ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
+                    )
+                mHandler.post {
+                    imageview.setImageURI(imageUri)
+
+                }
+
+
+            }
+        }
+
+        cursor!!.close()
     }
 }
 
